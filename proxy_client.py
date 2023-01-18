@@ -4,7 +4,7 @@ BYTES_TO_READ = 4096
 
 def get(host, port): 
 
-    request = b"GET / HTTP /1.1\nHost: www.google.com\n\n"
+    request = b"GET / HTTP/1.1\nHost: www.google.com\n\n"
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host,port))
         s.send(request)
@@ -13,7 +13,9 @@ def get(host, port):
         chunk = s.recv(BYTES_TO_READ)
         result = b'' + chunk
         while(len(chunk) > 0): 
-            result += s.recv(BYTES_TO_READ)
+            chunk = s.recv(BYTES_TO_READ)
+            result += chunk
+        s.close()
         return result
 
-get("www.google.com", 80)
+print(get("127.0.0.1", 8080))

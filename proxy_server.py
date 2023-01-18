@@ -1,5 +1,5 @@
 import socket
-import _thread
+from threading import Thread
 
 BYTES_TO_READ = 4096
 PROXY_SERVER_HOST = "127.0.0.1"
@@ -11,25 +11,32 @@ def send_request(host, port, request_data):
         client_socket.send(request_data)
         client_socket.shutdown(socket.SHUT_WR)
 
+        data = client_socket.recv(BYTES_TO_READ)
+        result = b'' + data
+        while len(data) > 0:
+            data = client_socket.recv(BYTES_TO_READ)
+            result += data
+        return result
+
     return
 
 def handle_request(conn, addr):
     with conn:
-        print("connected by (addr)")
+        print(f"connected by {addr}")
         request = b''
         while True:
             data = conn.recv(BYTES_TO_READ)
             if not data:
                 break
             print(data)
-            request =+ data
+            request += data
 
         response = send_request("www.google.com", 80, request)
         conn.sendall(response)
 
 def start_server():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-        server_socket.bind(PROXY_SERVER_HOST, PROXY_SERVER_PORT)
+        server_socket.bind((PROXY_SERVER_HOST, PROXY_SERVER_PORT))
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.listen(2)
         conn, addr = server_socket.accept()
@@ -39,12 +46,12 @@ def start_server():
 
 def start_threaded_server():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-        server_socket.bind(PROXY_SERVER_HOST, PROXY_SERVER_PORT)
+        server_socket.bind((PROXY_SERVER_HOST, PROXY_SERVER_PORT))
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.listen(2)
         while True:
             conn, addr = server_socket.accept()
-            thread = thread(target=handle_request, args=(conn, addr))
+            thread = Thread(target=handle_request, args=(conn, addr))
             thread.run()
 
-start_threaded_server
+start_threaded_server()
