@@ -1,0 +1,7 @@
+#!C:\Users\jaden\Downloads\404lab2\404lab2\venv\Scripts\python.exe
+
+from nc.__main__ import main
+import sys
+
+if __name__ == '__main__':
+    sys.exit(main())
