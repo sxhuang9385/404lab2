@@ -1,0 +1,13 @@
+1. Use the socket library and use socket.AF_INET and socket.SOCK_STREAM for the address family and type for the server.
+
+2. a client socket connects to an address and port number
+   a server socket binds to an address and port.
+
+3. socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, value)
+   The socket.SO_REUSEADDR argument tells the kernal to reuse a socket
+
+4. AF_INET shows the address family and SOCK_STREAM shows the socket type
+
+5. recv() returns the bytes object of the data received. The max size is specified by the argument, ie recv(123) has a bufsize of 123.
+
+6. https://github.com/sxhuang9385/404lab2
